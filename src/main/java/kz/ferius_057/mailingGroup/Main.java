@@ -19,9 +19,9 @@ public class Main {
         System.setOut(IoBuilder.forLogger().setLevel(Level.INFO).buildPrintStream());
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         System.out.println("норм текст отображается?");
-        System.out.println("stop esle text ne norm 5sec");
+        System.out.println("stop esle text ne norm 5sec\n");
 
         //Thread.sleep(6000);
 
