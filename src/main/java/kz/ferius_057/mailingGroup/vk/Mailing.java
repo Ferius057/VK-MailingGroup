@@ -113,7 +113,9 @@ public class Mailing {
                                 "\"random_id\":0," +
                                 "\"user_ids\":" + users + "," +
                                 "\"attachment\":[\"" + attachments + "\"]," +
-                                "\"message\":\"" + config.getMessage() + "\"" +
+                                "\"message\":\"" + config.getMessage() + "\"," +
+                                "\"dont_parse_links\":1," + // не создавать сниппет ссылки из сообщения
+                                "\"disable_mentions\":1" + // отключить уведомление об упоминании в сообщении
                                 "});"
                 ).executeAsync()
                 .exceptionally(throwable -> {
