@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
  * @date ⭐ 06.11.2022 | 21:45 ⭐
  */
 @UtilityClass
-public class AttachmentUtils {
+public class AttachmentUtil {
     static final Logger LOGGER = LogManager.getLogger();
 
     public CompletableFuture<String> parseAttachments(final VkBotsMethods vk, final Map<AttachmentType, List<String>> attachmentsConfig) {
@@ -35,6 +35,7 @@ public class AttachmentUtils {
                     switch (key) {
                         case PHOTO: attachments.addAll(photo(vk, value)); break;
                         case WALL: {
+                            // TODO: 15.11.2022 | сделать проверку поста 
                             val wall = value.get(0);
                             LOGGER.info("[WALL] Загрузка вложения {}...", wall);
                             attachments.add(wall);

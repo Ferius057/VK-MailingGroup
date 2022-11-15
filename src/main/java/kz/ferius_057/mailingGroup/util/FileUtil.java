@@ -15,7 +15,7 @@ import java.util.Objects;
  * @date ⭐ 10.09.2022 | 13:59 ⭐
  */
 @UtilityClass
-public class FileUtils {
+public class FileUtil {
 
     @SneakyThrows
     // TODO: 15.11.2022 | переписать

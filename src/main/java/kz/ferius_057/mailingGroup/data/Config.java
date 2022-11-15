@@ -2,7 +2,7 @@ package kz.ferius_057.mailingGroup.data;
 
 import kz.charles_grozny.bukkitConfig.configuration.file.YamlConfiguration;
 import kz.ferius_057.mailingGroup.model.media.AttachmentType;
-import kz.ferius_057.mailingGroup.util.FileUtils;
+import kz.ferius_057.mailingGroup.util.FileUtil;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,7 +36,7 @@ public class Config {
         val config = YamlConfiguration.loadConfiguration(path.toFile());
 
         if (!Files.exists(path)) {
-            FileUtils.saveResource(path.toFile());
+            FileUtil.saveResource(path.toFile());
             System.out.println("Создан файл конфигурации, заполните конфиг и запустите заново.");
         }
 

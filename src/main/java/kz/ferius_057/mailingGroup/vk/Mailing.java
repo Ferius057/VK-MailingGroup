@@ -8,7 +8,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import kz.ferius_057.mailingGroup.data.Config;
 import kz.ferius_057.mailingGroup.model.basic.Response;
-import kz.ferius_057.mailingGroup.util.AttachmentUtils;
+import kz.ferius_057.mailingGroup.util.AttachmentUtil;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -47,7 +47,7 @@ public class Mailing {
 
     @SneakyThrows
     public void run() {
-        CompletableFuture<String> uploadPhoto = AttachmentUtils.parseAttachments(vk, config.getAttachments());
+        CompletableFuture<String> uploadPhoto = AttachmentUtil.parseAttachments(vk, config.getAttachments());
 
         usersItem = getAvailableItems(); // Получает id всех пользователей которым можно отправить сообщение
         val usersItemSize = usersItem.size();
