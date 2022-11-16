@@ -18,7 +18,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +31,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class Mailing {
-    static final Logger LOGGER = LogManager.getLogger();
+    static final Logger LOGGER = LogManager.getLogger(Mailing.class);
     VkBotsMethods vk;
     Config config;
 
@@ -47,7 +46,7 @@ public class Mailing {
 
     @SneakyThrows
     public void run() {
-        CompletableFuture<String> uploadPhoto = AttachmentUtil.parseAttachments(vk, config.getAttachments());
+        val uploadPhoto = AttachmentUtil.parseAttachments(vk, config.getAttachments());
 
         usersItem = getAvailableItems(); // Получает id всех пользователей которым можно отправить сообщение
         val usersItemSize = usersItem.size();
@@ -58,7 +57,9 @@ public class Mailing {
         LOGGER.info("Количество запросов которое будет произведено: {}", usersListSize);
 
         val countQuery = new AtomicInteger(usersListSize-1);
-        usersList.forEach(users -> send(users, countQuery, uploadPhoto.join()));
+        val attachments = uploadPhoto.join();
+        LOGGER.debug("Вложения в сообщении: {}", attachments);
+        usersList.forEach(users -> send(users, countQuery, attachments));
 
         LOGGER.info("Все {} запросов приступили к работе...", usersListSize);
 
@@ -67,6 +68,7 @@ public class Mailing {
             LOGGER.info("\n------------------------------------------------------------------------------");
             Response response = GSON.fromJson(RESPONSES, Response.class);
 
+            LOGGER.debug("Все ответы запросов: {}", RESPONSES);
             LOGGER.info("Успешно отправлено: {} из {}", response.getCountSuccessful(), usersItemSize);
             response.getErrors()
                     .forEach(errorResponse ->
@@ -132,18 +134,21 @@ public class Mailing {
                 })
                 .thenAccept(response -> {
                     synchronized (RESPONSES) {
-                        RESPONSES.addAll(response.getResponse().getAsJsonArray());
+                        val responseArray = response.getResponse().getAsJsonArray();
+                        RESPONSES.addAll(responseArray);
 
                         long totalMemory = Runtime.getRuntime().totalMemory();
                         long freeMemory = Runtime.getRuntime().freeMemory();
                         long usedMemory = totalMemory - freeMemory;
-
 
                         LOGGER.info("Осталось {} запросов... total: {} | free: {} | used: {}",
                                 countQuery.getAndDecrement(),
                                 totalMemory/1048576,
                                 freeMemory/1048576,
                                 usedMemory/1048576);
+
+                        LOGGER.debug("RESPONSES: {}  |  this response: {}  |  usersItem: {}",
+                                RESPONSES.size(), responseArray.size(), usersItem.size());
                     }
                 });
     }

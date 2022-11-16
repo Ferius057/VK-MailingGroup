@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,6 +27,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class Config {
+    static final Logger LOGGER = LogManager.getLogger(Config.class);
+
     String token;
 
     String message;
@@ -51,8 +55,10 @@ public class Config {
                         .collect(Collectors.toMap(
                                 e -> AttachmentType.valueOf(e.getKey().toUpperCase()),
                                 e -> { // максимум вложения в 1 сообщении 10
+                                    LOGGER.debug("Вложения полученные из конфига: {} - {}", e.getKey(), e.getValue());
+
                                     ArrayList<String> attachments = new ArrayList<>((Collection<String>) e.getValue());
-                                        return attachments.subList(0, Math.min(attachments.size(), 10));
+                                    return attachments.subList(0, Math.min(attachments.size(), 10));
                                 }
                         ))
         );
