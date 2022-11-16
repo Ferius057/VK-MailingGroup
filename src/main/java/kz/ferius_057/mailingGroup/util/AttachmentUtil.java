@@ -35,10 +35,11 @@ public class AttachmentUtil {
                     switch (key) {
                         case PHOTO: attachments.addAll(photo(vk, value)); break;
                         case WALL: {
-                            // TODO: 15.11.2022 | сделать проверку поста 
                             val wall = value.get(0);
-                            LOGGER.info("[WALL] Загрузка вложения {}...", wall);
-                            attachments.add(wall);
+                            if (!wall.isEmpty()) {
+                                LOGGER.info("[WALL] Загрузка вложения {}...", wall);
+                                attachments.add(wall);
+                            }
                         } break;
                     }
                 } catch (VkApiException | IOException e) {
@@ -58,20 +59,22 @@ public class AttachmentUtil {
 
         val uploadServer = vk.photos.getMessagesUploadServer().execute().getResponse();
         for (val photoName : photosName) {
-            LOGGER.info("[PHOTO] Загрузка вложения {}...", photoName);
-            @Cleanup val inputStream = Files.newInputStream(Paths.get(photoName));
-            val uploadPhoto = new UploadPhoto(
-                    uploadServer.getUploadUrl(), photoName, inputStream
-            ).execute();
+            if (!photoName.isEmpty()) {
+                LOGGER.info("[PHOTO] Загрузка вложения {}...", photoName);
+                @Cleanup val inputStream = Files.newInputStream(Paths.get(photoName));
+                val uploadPhoto = new UploadPhoto(
+                        uploadServer.getUploadUrl(), photoName, inputStream
+                ).execute();
 
-            vk.photos.saveMessagesPhoto()
-                    .setHash(uploadPhoto.getHash())
-                    .setPhoto(uploadPhoto.getPhoto())
-                    .setServer(uploadPhoto.getServer())
-                    .execute().getResponse()
-                    .forEach(response -> photosAttachment.add(
-                            String.format("photo%s_%s", response.getOwnerId(), response.getId())
-                    ));
+                vk.photos.saveMessagesPhoto()
+                        .setHash(uploadPhoto.getHash())
+                        .setPhoto(uploadPhoto.getPhoto())
+                        .setServer(uploadPhoto.getServer())
+                        .execute().getResponse()
+                        .forEach(response -> photosAttachment.add(
+                                String.format("photo%s_%s", response.getOwnerId(), response.getId())
+                        ));
+            }
         }
 
         return photosAttachment;

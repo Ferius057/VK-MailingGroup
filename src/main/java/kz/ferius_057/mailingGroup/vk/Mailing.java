@@ -106,7 +106,7 @@ public class Mailing {
                 .collect(Collectors.toList());
     }
 
-       private void send(final List<Integer> users, final AtomicInteger countQuery, String attachments) {
+    private void send(final List<Integer> users, final AtomicInteger countQuery, String attachments) {
         vk.other.execute()
                 .setCode(
                         "return API.messages.send({" +
