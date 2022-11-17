@@ -9,11 +9,9 @@ import com.google.gson.JsonObject;
 import kz.ferius_057.mailingGroup.data.Config;
 import kz.ferius_057.mailingGroup.model.basic.Response;
 import kz.ferius_057.mailingGroup.util.AttachmentUtil;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
-import lombok.val;
+import lombok.experimental.NonFinal;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,7 +26,7 @@ import java.util.stream.Collectors;
  * @author Ferius_057 (Charles_Grozny)
  * @date ⭐ 10.09.2022 | 23:56 ⭐
  */
-@AllArgsConstructor
+@RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class Mailing {
     static final Logger LOGGER = LogManager.getLogger(Mailing.class);
@@ -36,7 +34,7 @@ public class Mailing {
     Config config;
 
 
-    static List<Integer> usersItem;
+    @NonFinal List<Integer> usersItem;
     static final int COUNT = 200; // max value 200 | кол-во диалогов которые нужно получать каждый запрос
     static final int COUNT_FOR_SEND = 100; // max value 100 | кол-во пользователей в 1 запросе отправки сообщения
     static final JsonArray RESPONSES = new JsonArray();

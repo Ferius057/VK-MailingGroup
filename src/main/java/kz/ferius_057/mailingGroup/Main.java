@@ -2,6 +2,7 @@ package kz.ferius_057.mailingGroup;
 
 import kz.ferius_057.mailingGroup.data.Config;
 import kz.ferius_057.mailingGroup.longpoll.LongPollListener;
+import kz.ferius_057.mailingGroup.vk.Mailing;
 import lombok.val;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.io.IoBuilder;
@@ -31,6 +32,9 @@ public class Main {
             return;
         }
 
-        new LongPollListener(config);
+        new Mailing(
+                LongPollListener.create(config),
+                config
+        ).run();
     }
 }
