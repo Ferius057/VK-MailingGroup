@@ -35,32 +35,37 @@ public class Config {
 
     Map<AttachmentType, List<String>> attachments;
 
+    boolean testModeEnable;
+    List<Integer> testModeUsers;
+
     @SuppressWarnings("unchecked")
     public static Config load(final Path path) {
         val config = YamlConfiguration.loadConfiguration(path.toFile());
 
         if (!Files.exists(path)) {
             FileUtil.saveResource(path.toFile());
-            System.out.println("Создан файл конфигурации, заполните конфиг и запустите заново.");
-        }
+            LOGGER.info("Создан файл конфигурации, заполните конфиг и запустите заново.");
+            return null;
+        } else
+            return new Config(
+                    config.getString("token"),
+                    config.getStringList("message")
+                            .stream().map(String::valueOf)
+                            .collect(Collectors.joining("<br>")),
+                    config.getConfigurationSection("attachments")
+                            .getValues(true)
+                            .entrySet().stream()
+                            .collect(Collectors.toMap(
+                                    e -> AttachmentType.valueOf(e.getKey().toUpperCase()),
+                                    e -> { // максимум вложения в 1 сообщении 10
+                                        LOGGER.debug("Вложения полученные из конфига: {} - {}", e.getKey(), e.getValue());
 
-        return new Config(
-                config.getString("token"),
-                config.getStringList("message")
-                        .stream().map(String::valueOf)
-                        .collect(Collectors.joining("<br>")),
-                config.getConfigurationSection("attachments")
-                        .getValues(true)
-                        .entrySet().stream()
-                        .collect(Collectors.toMap(
-                                e -> AttachmentType.valueOf(e.getKey().toUpperCase()),
-                                e -> { // максимум вложения в 1 сообщении 10
-                                    LOGGER.debug("Вложения полученные из конфига: {} - {}", e.getKey(), e.getValue());
-
-                                    ArrayList<String> attachments = new ArrayList<>((Collection<String>) e.getValue());
-                                    return attachments.subList(0, Math.min(attachments.size(), 10));
-                                }
-                        ))
-        );
+                                        ArrayList<String> attachments = new ArrayList<>((Collection<String>) e.getValue());
+                                        return attachments.subList(0, Math.min(attachments.size(), 10));
+                                    }
+                            )),
+                    config.getBoolean("testMode.enable"),
+                    config.getIntegerList("testMode.users")
+            );
     }
 }

@@ -46,7 +46,9 @@ public class Mailing {
     public void run() {
         val uploadPhoto = AttachmentUtil.parseAttachments(vk, config.getAttachments());
 
-        usersItem = getAvailableItems(); // Получает id всех пользователей которым можно отправить сообщение
+        // Проверяет если включен тест рассылки то берет id пользователей из списка 'user'
+        // В ином случае получает id всех пользователей которым можно отправить сообщение
+        usersItem = config.isTestModeEnable() ? config.getTestModeUsers() : getAvailableItems();
         val usersItemSize = usersItem.size();
         LOGGER.info("Пользователей с разрешенной отправкой сообщения: {}", usersItemSize);
 
@@ -70,7 +72,7 @@ public class Mailing {
             LOGGER.info("Успешно отправлено: {} из {}", response.getCountSuccessful(), usersItemSize);
             response.getErrors()
                     .forEach(errorResponse ->
-                            LOGGER.warn("Ошибка №{}: {}   |   {}",
+                            LOGGER.warn("Ошибка №{}: {} не отправлено   |   {}",
                             errorResponse.getCode(),
                             errorResponse.getCountErrors(),
                             errorResponse.getDescription()));

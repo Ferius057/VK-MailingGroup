@@ -22,8 +22,6 @@ public class FileUtil {
     public void saveResource(File file) {
         @Cleanup val in = Main.class.getResourceAsStream("/" + file.getName());
 
-        System.out.println(in);
-
         val result = new StringBuilder();
         try (val reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(in)))) {
             int i;
