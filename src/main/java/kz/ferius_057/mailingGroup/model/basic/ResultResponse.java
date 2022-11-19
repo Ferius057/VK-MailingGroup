@@ -1,7 +1,7 @@
 package kz.ferius_057.mailingGroup.model.basic;
 
 import com.google.gson.annotations.JsonAdapter;
-import kz.ferius_057.mailingGroup.adapters.deserializers.ResponseDeserializer;
+import kz.ferius_057.mailingGroup.adapters.deserializers.ResultDeserializer;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -13,9 +13,9 @@ import java.util.List;
  */
 @Getter
 @Builder
-@JsonAdapter(ResponseDeserializer.class)
+@JsonAdapter(ResultDeserializer.class)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Response {
+public class ResultResponse {
     int countSuccessful;
 
     List<ErrorResponse> errors;

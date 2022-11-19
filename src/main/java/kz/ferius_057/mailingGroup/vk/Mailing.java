@@ -7,7 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import kz.ferius_057.mailingGroup.data.Config;
-import kz.ferius_057.mailingGroup.model.basic.Response;
+import kz.ferius_057.mailingGroup.model.basic.ResultResponse;
 import kz.ferius_057.mailingGroup.util.AttachmentUtil;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -66,7 +66,7 @@ public class Mailing {
 
         end(() -> {
             LOGGER.info("\n------------------------------------------------------------------------------");
-            Response response = GSON.fromJson(RESPONSES, Response.class);
+            val response = GSON.fromJson(RESPONSES, ResultResponse.class);
 
             LOGGER.debug("Все ответы запросов: {}", RESPONSES);
             LOGGER.info("Успешно отправлено: {} из {}", response.getCountSuccessful(), usersItemSize);

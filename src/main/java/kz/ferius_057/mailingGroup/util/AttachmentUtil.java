@@ -34,13 +34,7 @@ public class AttachmentUtil {
                 try {
                     switch (key) {
                         case PHOTO: attachments.addAll(photo(vk, value)); break;
-                        case WALL: {
-                            val wall = value.get(0);
-                            if (!wall.isEmpty()) {
-                                LOGGER.info("[WALL] Загрузка вложения {}...", wall);
-                                attachments.add(wall);
-                            }
-                        } break;
+                        case WALL: attachments.add(wall(value)); break;
                     }
                 } catch (VkApiException | IOException e) {
                     throw new RuntimeException(e);
@@ -78,5 +72,13 @@ public class AttachmentUtil {
         }
 
         return photosAttachment;
+    }
+
+    private String wall(final List<String> walls) {
+        val wall = walls.get(0);
+        if (!wall.isEmpty()) {
+            LOGGER.info("[WALL] Загрузка вложения {}...", wall);
+            return wall;
+        } else return "";
     }
 }
