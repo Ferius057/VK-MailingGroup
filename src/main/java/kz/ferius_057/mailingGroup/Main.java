@@ -29,6 +29,8 @@ public class Main {
     }
 
     public static void main(String[] args) {
+        showMenu();
+
         Update.check(CURRENT_VERSION);
 
         val config = Config.load(Paths.get("config.yml"));
@@ -61,5 +63,21 @@ public class Main {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static void showMenu() {
+        LOGGER.info(
+                "\n╓———————————————————————————————————————————————————————————"
+                        + "\n╟———→ MailingGroup v{}   by Ferius_057 aka Charles_Grozny"
+                        + "\n╟———→ Разработчик: vk.com/ferius_057"
+                        + "\n╟———→ Исходный код: github.com/Ferius057/VK-MailingGroup"
+                        + "\n║"
+                        + "\n╟———→ Running on {} {}"
+                        + "\n╟———→ Java version: {} {}"
+                        + "\n╙———————————————————————————————————————————————————————————"
+                , CURRENT_VERSION
+                , System.getProperty("os.name"), System.getProperty("os.arch")
+                , System.getProperty("java.vm.vendor"), System.getProperty("java.vm.version")
+        );
     }
 }
