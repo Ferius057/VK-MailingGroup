@@ -48,6 +48,7 @@ public class Main {
             LOGGER.info("Нажмите [ENTER] что бы начать рассылку...");
             new Scanner(System.in).nextLine();
 
+            LOGGER.info("Начало рассылки...");
             new Mailing(
                     LongPollListener.create(config),
                     config
