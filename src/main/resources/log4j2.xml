@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" shutdownHook="disable">
+    <Appenders>
+        <Console name="TerminalConsole">
+            <PatternLayout pattern="[%d{HH:mm:ss} %level]: %msg%n%xEx" />
+        </Console>
+
+        <RollingRandomAccessFile name="File" fileName="logs/latest.log"
+                                 filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="[%d{HH:mm:ss}] [ %-5p | %c{1}:%L | %t] : %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <OnStartupTriggeringPolicy/>
+            </Policies>
+        </RollingRandomAccessFile>
+    </Appenders>
+
+    <Loggers>
+        <Root level="trace">
+            <AppenderRef ref="TerminalConsole" level="info"/>
+            <AppenderRef ref="File" level="trace"/>
+        </Root>
+    </Loggers>
+</Configuration>
