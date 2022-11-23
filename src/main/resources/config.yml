@@ -1,4 +1,7 @@
-# Разработчик: https://vk.com/ferius_057
+# MailingGroup  by Ferius_057 aka Charles_Grozny
+# Разработчик: vk.com/ferius_057
+# Исходный код: github.com/Ferius057/VK-MailingGroup
+
 
 # Токен группы
 token: 'token'
@@ -8,11 +11,9 @@ token: 'token'
 testMode:
   # true = будет отправлено только пользователям из списка 'users'
   # false = полноценная рассылка всем пользователям с кем был диалог
-  enable: false
+  enable: true
   users:
-    - 615081290
     - 1
-    - 2
     - 621876211
 
 
@@ -28,15 +29,13 @@ testMode:
 attachments:
   # В 1 сообщений можно прикреплять 10 фотографий.
   photo:
-    - 'img.png'
     - '1.jpg'
-    - '2.jpg'
     - '2.jpg'
     - '3.jpg'
 
   # В 1 сообщений можно прикреплять только 1 пост.
   wall:
-    - 'wall-28905875_30158949'
+    - 'wall-200934694_40'
 
 
 

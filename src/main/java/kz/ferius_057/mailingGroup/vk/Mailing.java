@@ -129,7 +129,7 @@ public class Mailing {
                 .thenAccept(response -> {
                     synchronized (RESPONSES) {
                         val responseArray = response.getResponse().getAsJsonArray();
-                          RESPONSES.addAll(responseArray);
+                        RESPONSES.addAll(responseArray);
 
                         val totalMemory = Runtime.getRuntime().totalMemory();
                         val freeMemory = Runtime.getRuntime().freeMemory();
