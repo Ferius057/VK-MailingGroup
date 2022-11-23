@@ -9,9 +9,12 @@ import com.google.gson.JsonObject;
 import kz.ferius_057.mailingGroup.data.Config;
 import kz.ferius_057.mailingGroup.model.basic.ResultResponse;
 import kz.ferius_057.mailingGroup.util.AttachmentUtil;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
+import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -59,24 +62,15 @@ public class Mailing {
         val countQuery = new AtomicInteger(usersListSize-1);
         val attachments = uploadPhoto.join();
         LOGGER.debug("Вложения в сообщении: {}", attachments);
-        usersList.forEach(users -> send(users, countQuery, attachments));
+        usersList.forEach(user -> send(user, countQuery, attachments));
 
         LOGGER.info("Все {} запросов приступили к работе...", usersListSize);
 
 
-        end(() -> {
-            LOGGER.info("\n------------------------------------------------------------------------------");
-            val response = GSON.fromJson(RESPONSES, ResultResponse.class);
-
-            LOGGER.debug("Все ответы запросов: {}", RESPONSES);
-            LOGGER.info("Успешно отправлено: {} из {}", response.getCountSuccessful(), usersItemSize);
-            response.getErrors()
-                    .forEach(errorResponse ->
-                            LOGGER.warn("Ошибка №{}: {} не отправлено   |   {}",
-                            errorResponse.getCode(),
-                            errorResponse.getCountErrors(),
-                            errorResponse.getDescription()));
-        }, usersItemSize);
+        SCHEDULED_EXECUTOR_SERVICE.schedule(() -> {
+            LOGGER.error("Произошла неизвестная ошибка, скрипт был выключен автоматически. | {}", RESPONSES.size());
+            SCHEDULED_EXECUTOR_SERVICE.shutdownNow();
+        }, 1, TimeUnit.HOURS); // если произойдет ошибка, то автоматическое выключение через час
     }
 
     @SneakyThrows
@@ -108,7 +102,7 @@ public class Mailing {
                 .collect(Collectors.toList());
     }
 
-    private void send(final List<Integer> users, final AtomicInteger countQuery, String attachments) {
+    private void send(final List<Integer> users, final AtomicInteger numberQuery, final String attachments) {
         vk.other.execute()
                 .setCode(
                         "return API.messages.send({" +
@@ -137,35 +131,37 @@ public class Mailing {
                         val responseArray = response.getResponse().getAsJsonArray();
                         RESPONSES.addAll(responseArray);
 
-                        long totalMemory = Runtime.getRuntime().totalMemory();
-                        long freeMemory = Runtime.getRuntime().freeMemory();
-                        long usedMemory = totalMemory - freeMemory;
+                        val totalMemory = Runtime.getRuntime().totalMemory();
+                        val freeMemory = Runtime.getRuntime().freeMemory();
 
-                        LOGGER.info("Осталось {} запросов... total: {} | free: {} | used: {}",
-                                countQuery.getAndDecrement(),
-                                totalMemory/1048576,
-                                freeMemory/1048576,
-                                usedMemory/1048576);
+                        LOGGER.info("Осталось {} запросов...", numberQuery.getAndDecrement());
 
-                        LOGGER.debug("RESPONSES: {}  |  this response: {}  |  usersItem: {}",
-                                RESPONSES.size(), responseArray.size(), usersItem.size());
+                        LOGGER.debug("RESPONSES: {}  |  this response: {}  |  usersItem: {}" +
+                                        "\nmem total: {}  |  free: {}  |  used: {}",
+                                RESPONSES.size(), responseArray.size(), usersItem.size(),
+                                totalMemory / 1048576, freeMemory / 1048576,
+                                totalMemory - freeMemory);
+
+                        isLastQuery(numberQuery.get()); // если последний запрос то завершение
                     }
                 });
     }
 
-    @SneakyThrows
-    private void end(Runnable runnable, int countUsers) {
-        SCHEDULED_EXECUTOR_SERVICE.schedule(() -> {
-            LOGGER.error("Произошла неизвестная ошибка, скрипт был выключен автоматически. | {} | {}", RESPONSES.size(), countUsers);
-            SCHEDULED_EXECUTOR_SERVICE.shutdown();
-        }, 1, TimeUnit.HOURS); // вдруг что, и что бы через час выключилось
+    private void isLastQuery(final int numberQuery) {
+        if (numberQuery < 0) {
+            LOGGER.info("\n------------------------------------------------------------------------------");
+            val response = GSON.fromJson(RESPONSES, ResultResponse.class);
 
-        // каждые 200 ms проверяет кол-во отправленных и всего пользователей, если совпадает значит выполнились все запросы и стоп
-        SCHEDULED_EXECUTOR_SERVICE.scheduleAtFixedRate(() -> {
-            if (RESPONSES.size() == countUsers) {
-                SCHEDULED_EXECUTOR_SERVICE.shutdownNow();
-                runnable.run();
-            }
-        }, 0, 200, TimeUnit.MILLISECONDS);
+            LOGGER.debug("Все ответы запросов: {}", RESPONSES);
+            LOGGER.info("Успешно отправлено: {} из {}", response.getCountSuccessful(), usersItem.size());
+            response.getErrors()
+                    .forEach(errorResponse ->
+                            LOGGER.warn("Ошибка №{}: {} не отправлено   |   {}",
+                                    errorResponse.getCode(),
+                                    errorResponse.getCountErrors(),
+                                    errorResponse.getDescription()));
+
+            SCHEDULED_EXECUTOR_SERVICE.shutdownNow();
+        }
     }
 }
