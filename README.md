@@ -55,10 +55,12 @@ $ java -jar MailingGroup.jar
 <hr>
 
 ## Config
+> Подробную информацию про то как добавить запись [ТУТ](https://github.com/Ferius057/VK-MailingGroup/blob/master/docs/wall.md)
 ```yml
 # MailingGroup  by Ferius_057 aka Charles_Grozny
 # Разработчик: vk.com/ferius_057
 # Исходный код: github.com/Ferius057/VK-MailingGroup
+# Подробную информацию про то как добавить запись: https://github.com/Ferius057/VK-MailingGroup/blob/master/docs/wall.md
 
 
 # Токен группы
