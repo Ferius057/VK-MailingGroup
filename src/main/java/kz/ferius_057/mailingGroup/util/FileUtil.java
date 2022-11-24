@@ -1,14 +1,12 @@
 package kz.ferius_057.mailingGroup.util;
 
-import kz.ferius_057.mailingGroup.Main;
-import lombok.Cleanup;
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
+import com.google.common.io.Resources;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import lombok.val;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
+import java.io.File;
 
 /**
  * @author Ferius_057 (Charles_Grozny)
@@ -18,22 +16,11 @@ import java.util.Objects;
 public class FileUtil {
 
     @SneakyThrows
-    // TODO: 15.11.2022 | переписать
     public void saveResource(File file) {
-        @Cleanup val in = Main.class.getResourceAsStream("/" + file.getName());
-
-        val result = new StringBuilder();
-        try (val reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(in)))) {
-            int i;
-            while ((i = reader.read()) != -1) {
-
-                result.append((char) i);
-            }
-        }
-
-        try (val out = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(file), StandardCharsets.UTF_8))) {
-            out.write(result.toString());
-        }
+        Files.asByteSink(file)
+                .write(Resources.toString(
+                        Resources.getResource(file.getName()),
+                        Charsets.UTF_8
+                ).getBytes());
     }
 }
