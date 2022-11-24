@@ -20,7 +20,7 @@ import java.util.*;
  */
 public class Main {
     static final Logger LOGGER = LogManager.getLogger(Config.class);
-     static final String CURRENT_VERSION = getCurrentVersion();
+    static final String CURRENT_VERSION = getCurrentVersion();
 
     static {
         /* for logging */
