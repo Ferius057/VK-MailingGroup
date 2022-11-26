@@ -1,7 +1,10 @@
 package kz.ferius_057.mailingGroup.vk;
 
 import api.longpoll.bots.methods.VkBotsMethods;
+import api.longpoll.bots.methods.impl.messages.GetConversations;
 import api.longpoll.bots.methods.impl.other.Execute;
+import api.longpoll.bots.model.objects.basic.User;
+import api.longpoll.bots.model.response.ExtendedVkList;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -19,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -76,19 +80,19 @@ public class Mailing {
     @SneakyThrows
     private List<Integer> getAvailableItems() {
         val firstResponse = vk.messages.getConversations().setCount(COUNT).setExtended(true).execute().getResponse();
+        val userIdsDeleted = getUserIdsDeleted(firstResponse);
         val items = firstResponse.getItems();
 
         for (int i = 1; items.size() < firstResponse.getCount(); i++) {
             if (i % 3 == 0)
                 LOGGER.info("Получение диалогов: {}...", (firstResponse.getCount() - items.size()));
-            vk.messages.getConversations()
+            val response = vk.messages.getConversations()
                     .setCount(COUNT)
                     .setOffset(i * COUNT)
                     .setExtended(true)
-                    .executeAsync()
-                    .thenAccept(response -> items
-                            .addAll(response.getResponse().getItems()) // TODO: 31.10.2022 | проверка на DELETED
-                    ).join();
+                    .execute().getResponse();
+            items.addAll(response.getItems());
+            userIdsDeleted.addAll(getUserIdsDeleted(response));
         }
 
         LOGGER.info("Найдено диалогов: {}", items.size());
@@ -97,8 +101,17 @@ public class Mailing {
                 .filter(item -> {
                     val conversation = item.getConversation();
                     return conversation.getPeer().getType().equalsIgnoreCase("user") // если это пользователь, а не чат
+                            && !userIdsDeleted.contains(conversation.getPeer().getId()) // если его нет в списке удаленных пользователей
                             && conversation.getCanWrite().getAllowed(); // если пользователю можно писать в лс
                 }).map(item -> item.getConversation().getPeer().getId())
+                .collect(Collectors.toList());
+    }
+
+    private List<Integer> getUserIdsDeleted(final ExtendedVkList<GetConversations.ResponseBody.Item> response) {
+        return response.getProfiles().stream()
+                .filter(user -> Optional.ofNullable(
+                        user.getDeactivated()).orElse("").equalsIgnoreCase("deleted")
+                ).map(User::getId)
                 .collect(Collectors.toList());
     }
 
