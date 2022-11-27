@@ -36,30 +36,22 @@ public class Update {
             )) {
                 val entity = response.getEntity();
                 if (Optional.ofNullable(entity).isPresent()) {
-                    // TODO: 20.11.2022 | изменить после релиза
-                    val entityString = EntityUtils.toString(entity);
-                    UpdateResponse lastRelease;
-                    if (!entityString.contains("Not Found")) {
-                        lastRelease = new Gson().fromJson(
-                                entityString,
-                                UpdateResponse.class);
-                    } else {
-                        lastRelease = UpdateResponse.builder()
-                                .tagName(currentVersion)
-                                .body(currentVersion)
-                                .build();
-                    }
+                    val lastRelease = new Gson().fromJson(
+                            EntityUtils.toString(entity),
+                            UpdateResponse.class);
 
                     if (isNewVersion(currentVersion, lastRelease.getTagName())) {
-                        LOGGER.info("Доступно обновление!" +
-                                "\nНовая версия: {}" +
-                                "\nТекущая версия: {}" +
-                                "\nСведения об обновлении: \n{}",
+                        LOGGER.info("\n---------------------------------------------------" +
+                                        "\nДоступно обновление!" +
+                                        "\nНовая версия: {}" +
+                                        "\nТекущая версия: {}" +
+                                        "\nСведения об обновлении: \n{}" +
+                                        "\n---------------------------------------------------",
                                 lastRelease.getTagName(),
                                 currentVersion,
                                 lastRelease.getBody());
 
-                    } else LOGGER.warn("Обновления не найдены.");
+                    } else LOGGER.info("Обновления не найдены.");
                 } else LOGGER.warn("Не удалось проверить версию | {}", response);
             }
         }

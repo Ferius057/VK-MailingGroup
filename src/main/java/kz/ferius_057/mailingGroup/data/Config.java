@@ -31,7 +31,7 @@ public class Config {
 
     String token;
 
-    String message;
+    String message; // TODO: 24.11.2022 | сделать удобный конфиг для сообщений 
 
     Map<AttachmentType, List<String>> attachments;
 

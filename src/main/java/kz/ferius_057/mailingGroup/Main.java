@@ -12,7 +12,10 @@ import org.apache.logging.log4j.io.IoBuilder;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.Scanner;
 
 /**
  * @author Ferius_057 (Charles_Grozny)
