@@ -45,9 +45,11 @@ public class Update {
                                         "\nДоступно обновление!" +
                                         "\nТекущая версия: {}" +
                                         "\nНовая версия: {}" +
+                                        "\nСкачать можно тут: https://github.com/Ferius057/VK-MailingGroup/releases/{}" +
                                         "\nСведения об обновлении: \n{}" +
                                         "\n---------------------------------------------------",
                                 currentVersion,
+                                lastRelease.getTagName(),
                                 lastRelease.getTagName(),
                                 lastRelease.getBody());
 
