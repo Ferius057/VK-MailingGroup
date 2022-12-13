@@ -43,12 +43,12 @@ public class Update {
                     if (isNewVersion(currentVersion, lastRelease.getTagName())) {
                         LOGGER.info("\n---------------------------------------------------" +
                                         "\nДоступно обновление!" +
-                                        "\nНовая версия: {}" +
                                         "\nТекущая версия: {}" +
+                                        "\nНовая версия: {}" +
                                         "\nСведения об обновлении: \n{}" +
                                         "\n---------------------------------------------------",
-                                lastRelease.getTagName(),
                                 currentVersion,
+                                lastRelease.getTagName(),
                                 lastRelease.getBody());
 
                     } else LOGGER.info("Обновления не найдены.");
