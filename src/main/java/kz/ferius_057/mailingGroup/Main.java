@@ -4,6 +4,8 @@ import kz.ferius_057.mailingGroup.data.Config;
 import kz.ferius_057.mailingGroup.longpoll.LongPollListener;
 import kz.ferius_057.mailingGroup.util.Update;
 import kz.ferius_057.mailingGroup.vk.Mailing;
+import lombok.Cleanup;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -11,11 +13,14 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.io.IoBuilder;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Ferius_057 (Charles_Grozny)
@@ -33,6 +38,7 @@ public class Main {
 
     public static void main(String[] args) {
         showMenu();
+        pingVKApi();
 
         Update.check(CURRENT_VERSION);
 
@@ -83,5 +89,22 @@ public class Main {
                 , System.getProperty("os.name"), System.getProperty("os.arch")
                 , System.getProperty("java.vm.vendor"), System.getProperty("java.vm.version")
         );
+    }
+
+    @SneakyThrows
+    private static void pingVKApi() {
+        CompletableFuture.runAsync(() -> {
+            try {
+                @Cleanup val socket = new Socket();
+                val endpoint = new InetSocketAddress("api.vk.com", 80);
+                val start = System.currentTimeMillis();
+
+                socket.connect(endpoint, 0);
+
+                LOGGER.debug("Пинг до api.vk.com - {} = {}ms", endpoint.getAddress(), System.currentTimeMillis() - start);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }
