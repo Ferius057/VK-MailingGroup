@@ -31,7 +31,7 @@ public class Config {
 
     String token;
 
-    String message; // TODO: 24.11.2022 | сделать удобный конфиг для сообщений 
+    String message;
 
     Map<AttachmentType, List<String>> attachments;
 
@@ -49,9 +49,8 @@ public class Config {
         } else
             return new Config(
                     config.getString("token"),
-                    config.getStringList("message")
-                            .stream().map(String::valueOf)
-                            .collect(Collectors.joining("<br>")),
+                    config.getString("message")
+                            .replace("\n", "<br>"),
                     config.getConfigurationSection("attachments")
                             .getValues(true)
                             .entrySet().stream()

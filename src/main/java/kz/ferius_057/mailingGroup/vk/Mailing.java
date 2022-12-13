@@ -150,10 +150,10 @@ public class Mailing {
                         LOGGER.info("Осталось {} запросов...", numberQuery.getAndDecrement());
 
                         LOGGER.debug("RESPONSES: {}  |  this response: {}  |  usersItem: {}" +
-                                        "\nmem total: {}  |  free: {}  |  used: {}",
+                                        "\nmem total: {}mb  |  free: {}mb  |  used: {}mb",
                                 RESPONSES.size(), responseArray.size(), usersItem.size(),
                                 totalMemory / 1048576, freeMemory / 1048576,
-                                totalMemory - freeMemory);
+                                (totalMemory - freeMemory) / 1048576);
 
                         isLastQuery(numberQuery.get()); // если последний запрос то завершение
                     }

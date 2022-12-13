@@ -43,12 +43,14 @@ public class Update {
                     if (isNewVersion(currentVersion, lastRelease.getTagName())) {
                         LOGGER.info("\n---------------------------------------------------" +
                                         "\nДоступно обновление!" +
-                                        "\nНовая версия: {}" +
                                         "\nТекущая версия: {}" +
+                                        "\nНовая версия: {}" +
+                                        "\nСкачать можно тут: https://github.com/Ferius057/VK-MailingGroup/releases/{}" +
                                         "\nСведения об обновлении: \n{}" +
                                         "\n---------------------------------------------------",
-                                lastRelease.getTagName(),
                                 currentVersion,
+                                lastRelease.getTagName(),
+                                lastRelease.getTagName(),
                                 lastRelease.getBody());
 
                     } else LOGGER.info("Обновления не найдены.");
