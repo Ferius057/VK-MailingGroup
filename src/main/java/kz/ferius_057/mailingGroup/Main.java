@@ -59,7 +59,7 @@ public class Main {
 
             LOGGER.info("Начало рассылки...");
             new Mailing(
-                    LongPollListener.create(config),
+                    LongPollListener.create(config.getToken()),
                     config
             ).run();
         }
