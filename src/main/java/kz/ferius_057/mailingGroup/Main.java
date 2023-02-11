@@ -54,12 +54,13 @@ public class Main {
                     + "\n[✸] Текст сообщений:\n" + config.getMessage().replace("<br>", "\n")
             );
 
-            LOGGER.info("Нажмите [ENTER] что бы начать рассылку...");
-            val nextLine = new Scanner(System.in).nextLine();
-            // заметил что в птеродактиле сложно остановить скрипт когда он сам завершается
+            LOGGER.info("Нажмите [ENTER] что бы начать рассылку..." +
+                    "\nКоманда [stop] остановит скрипт.");
+            val nextLine = new Scanner(System.in).nextLine().toLowerCase();
+            // заметил что в птеродактиле проблематично остановить скрипт когда он сам завершается
             // пока это единственное решение что я придумал
-            if (nextLine.equalsIgnoreCase("stop")) {
-                LOGGER.info("Скрипт был остановлен, используйте kill что бы завершить процесс.");
+            if (nextLine.contains("stop")) {
+                LOGGER.info("Скрипт был остановлен, завершите процесс удобным для себя способом.");
                 Thread.sleep(Long.MAX_VALUE);
             }
 

@@ -38,6 +38,8 @@ public class Config {
     boolean testModeEnable;
     List<Integer> testModeUsers;
 
+    List<Integer> blackListUsers;
+
     @SuppressWarnings("unchecked")
     public static Config load(final Path path) {
         val config = YamlConfiguration.loadConfiguration(path.toFile());
@@ -64,7 +66,8 @@ public class Config {
                                     }
                             )),
                     config.getBoolean("testMode.enable"),
-                    config.getIntegerList("testMode.users")
+                    config.getIntegerList("testMode.users"),
+                    config.getIntegerList("blackList")
             );
     }
 }

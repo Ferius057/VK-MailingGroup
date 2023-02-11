@@ -64,7 +64,7 @@ public class Mailing {
         LOGGER.info("Количество запросов которое будет произведено: {}", usersListSize);
 
         val countQuery = new AtomicInteger(usersListSize-1);
-        val attachments = uploadPhoto.join();
+        val attachments = uploadPhoto.get();
         LOGGER.debug("Вложения в сообщении: {}", attachments);
         usersList.forEach(user -> send(user, countQuery, attachments));
 
@@ -72,6 +72,7 @@ public class Mailing {
 
 
         SCHEDULED_EXECUTOR_SERVICE.schedule(() -> {
+            LOGGER.error("Прошу вас отписать мне в вк - vk.com/ferius_057 или тг - t.me/ferius_057");
             LOGGER.error("Произошла неизвестная ошибка, скрипт был выключен автоматически. | {}", RESPONSES.size());
             SCHEDULED_EXECUTOR_SERVICE.shutdownNow();
         }, 1, TimeUnit.HOURS); // если произойдет ошибка, то автоматическое выключение через час
@@ -97,7 +98,7 @@ public class Mailing {
 
         LOGGER.info("Найдено диалогов: {}", items.size());
 
-        return items.stream()
+        val usersItem = items.stream()
                 .filter(item -> {
                     val conversation = item.getConversation();
                     return conversation.getPeer().getType().equalsIgnoreCase("user") // если это пользователь, а не чат
@@ -105,6 +106,11 @@ public class Mailing {
                             && conversation.getCanWrite().getAllowed(); // если пользователю можно писать в лс
                 }).map(item -> item.getConversation().getPeer().getId())
                 .collect(Collectors.toList());
+
+        // удалить всех юзеров которые не будут получать рассылку
+        usersItem.removeAll(config.getBlackListUsers());
+
+        return usersItem;
     }
 
     private List<Integer> getUserIdsDeleted(final ExtendedVkList<GetConversations.ResponseBody.Item> response) {
@@ -130,6 +136,7 @@ public class Mailing {
                 .exceptionally(throwable -> {
                     try {
                         // TODO: 05.11.2022 | проверять ошибки
+                        LOGGER.error("Прошу вас отписать мне в вк - vk.com/ferius_057 или тг - t.me/ferius_057");
                         LOGGER.error("Не удалось выполнить метод execute: {}", throwable.getCause().getMessage());
                         JsonObject jsonObject = new Gson().fromJson(throwable.getCause().getMessage(), JsonObject.class);
                         System.out.println(jsonObject);
