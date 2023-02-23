@@ -36,7 +36,7 @@ public class Main {
         System.setOut(IoBuilder.forLogger().setLevel(Level.INFO).buildPrintStream());
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         showMenu();
         pingVKApi();
 
@@ -54,12 +54,19 @@ public class Main {
                     + "\n[✸] Текст сообщений:\n" + config.getMessage().replace("<br>", "\n")
             );
 
-            LOGGER.info("Нажмите [ENTER] что бы начать рассылку...");
-            new Scanner(System.in).nextLine();
+            LOGGER.info("Нажмите [ENTER] что бы начать рассылку..." +
+                    "\nКоманда [stop] остановит скрипт.");
+            val nextLine = new Scanner(System.in).nextLine().toLowerCase();
+            // заметил что в птеродактиле проблематично остановить скрипт когда он сам завершается
+            // пока это единственное решение что я придумал
+            if (nextLine.contains("stop")) {
+                LOGGER.info("Скрипт был остановлен, завершите процесс удобным для себя способом.");
+                Thread.sleep(Long.MAX_VALUE);
+            }
 
             LOGGER.info("Начало рассылки...");
             new Mailing(
-                    LongPollListener.create(config),
+                    LongPollListener.create(config.getToken()),
                     config
             ).run();
         }

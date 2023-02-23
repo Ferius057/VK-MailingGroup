@@ -5,24 +5,20 @@ import api.longpoll.bots.methods.VkBotsMethods;
 import kz.ferius_057.mailingGroup.data.Config;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
 /**
  * @author Ferius_057 (Charles_Grozny)
  * @date ⭐ 22.10.2022 | 21:10 ⭐
  */
+@Getter
 @AllArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class LongPollListener extends LongPollBot {
-    Config config;
+    String accessToken;
 
-
-    public static VkBotsMethods create(final Config config) {
-        return new LongPollListener(config).vk;
-    }
-
-    @Override
-    public String getAccessToken() {
-        return config.getToken();
+    public static VkBotsMethods create(final String token) {
+        return new LongPollListener(token).vk;
     }
 }
