@@ -43,6 +43,10 @@
   </a>
 
 ```bash
+# Скачать на Linux
+$ wget https://github.com/Ferius057/VK-MailingGroup/releases/download/1.3.0/MailingGroup.jar
+
+
 # Для запуска скрипта
 $ java -jar MailingGroup.jar
 
