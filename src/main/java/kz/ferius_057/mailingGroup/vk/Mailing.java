@@ -21,7 +21,6 @@ import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executors;
@@ -60,10 +59,6 @@ public class Mailing {
         val usersItemSize = usersItem.size();
         LOGGER.info("Пользователей с разрешенной отправкой сообщения: {}", usersItemSize);
 
-      /*  val usersList = Lists.partition(
-                duplicateList(duplicateList(duplicateList(duplicateList(duplicateList(duplicateList(duplicateList(duplicateList(duplicateList(usersItem)))))))))
-                , COUNT_FOR_SEND); // Поделить что бы в каждом send запросе было не более COUNT_FOR_SEND*/
-
         val usersList = Lists.partition(usersItem, COUNT_FOR_SEND); // Поделить что бы в каждом send запросе было не более COUNT_FOR_SEND
 
         val usersListSize = usersList.size();
@@ -83,12 +78,6 @@ public class Mailing {
             SCHEDULED_EXECUTOR_SERVICE.shutdownNow();
         }, 1, TimeUnit.HOURS); // если произойдет ошибка, то автоматическое выключение через час
     }
-
-   /* public List<Integer> duplicateList(List<Integer> originalList) {
-        List<Integer> duplicatedList = new ArrayList<>(originalList);
-        duplicatedList.addAll(originalList);
-        return duplicatedList;
-    }*/
 
     @SneakyThrows
     private List<Integer> getAvailableItems() {

@@ -1,6 +1,6 @@
 <h1 align="center">VK-MailingGroup</h1>
 <p align="center">
-       <a href="https://github.com/Ferius057/VK-MailingGroup/releases/tag/1.3.0">
+       <a href="https://github.com/Ferius057/VK-MailingGroup/releases/tag/1.4.0">
     <img src="https://img.shields.io/github/v/release/Ferius057/VK-MailingGroup?style=flat-square">
   </a>
     <a href="https://opensource.org/licenses/MIT">
@@ -13,7 +13,7 @@
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg">
   </a>
   <p align="center">
-  <a href="https://github.com/Ferius057/VK-MailingGroup/releases/download/1.3.0/MailingGroup.jar">
+  <a href="https://github.com/Ferius057/VK-MailingGroup/releases/download/1.4.0/MailingGroup.jar">
     <img src="https://img.shields.io/github/downloads/Ferius057/VK-MailingGroup/total?color=6ff00">
   <a href="https://www.donationalerts.com/r/ferius_057">
     <img src="https://img.shields.io/badge/Donate-DonationAlerts-orange.svg">
@@ -39,13 +39,13 @@
 <hr>
 
 ## Использование:
-   <a href="https://github.com/Ferius057/VK-MailingGroup/releases/download/1.3.0/MailingGroup.jar">
+   <a href="https://github.com/Ferius057/VK-MailingGroup/releases/download/1.4.0/MailingGroup.jar">
     <img src="https://img.shields.io/github/downloads/Ferius057/VK-MailingGroup/total?color=6ff00">
   </a>
 
 ```bash
 # Скачать на Linux
-$ wget https://github.com/Ferius057/VK-MailingGroup/releases/download/1.3.0/MailingGroup.jar
+$ wget https://github.com/Ferius057/VK-MailingGroup/releases/download/1.4.0/MailingGroup.jar
 
 
 # Для запуска скрипта
