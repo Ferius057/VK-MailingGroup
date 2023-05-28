@@ -2,7 +2,6 @@ package kz.ferius_057.mailingGroup.longpoll;
 
 import api.longpoll.bots.LongPollBot;
 import api.longpoll.bots.methods.VkBotsMethods;
-import kz.ferius_057.mailingGroup.data.Config;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

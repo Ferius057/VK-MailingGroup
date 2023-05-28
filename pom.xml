@@ -6,7 +6,7 @@
 
     <groupId>kz.ferius_057</groupId>
     <artifactId>MailingGroup</artifactId>
-    <version>1.3.0</version>
+    <version>1.4.0</version>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -57,13 +57,13 @@
         <dependency>
             <groupId>com.github.yvasyliev</groupId>
             <artifactId>java-vk-bots-longpoll-api</artifactId>
-            <version>3.5.3</version>
+            <version>4.1.3</version>
         </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.24</version>
+            <version>1.18.28</version>
             <scope>provided</scope>
         </dependency>
 
@@ -77,12 +77,6 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.5.14</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-artifact</artifactId>
-            <version>3.8.6</version>
         </dependency>
 
         <!-- logging -->

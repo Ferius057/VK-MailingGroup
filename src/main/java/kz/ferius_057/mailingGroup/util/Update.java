@@ -13,8 +13,9 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URI;
 import java.util.Optional;
 
@@ -56,6 +57,11 @@ public class Update {
                     } else LOGGER.info("Обновления не найдены.");
                 } else LOGGER.warn("Не удалось проверить версию | {}", response);
             }
+        } catch (Exception e) {
+            val stringWriter = new StringWriter();
+            e.printStackTrace(new PrintWriter(stringWriter));
+            LOGGER.debug(stringWriter.toString());
+            LOGGER.error("Не удалось проверить обновление | Подробная информация в логах | {}", e.getMessage());
         }
     }
 

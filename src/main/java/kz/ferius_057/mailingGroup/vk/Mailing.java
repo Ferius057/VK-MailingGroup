@@ -60,6 +60,7 @@ public class Mailing {
         LOGGER.info("Пользователей с разрешенной отправкой сообщения: {}", usersItemSize);
 
         val usersList = Lists.partition(usersItem, COUNT_FOR_SEND); // Поделить что бы в каждом send запросе было не более COUNT_FOR_SEND
+
         val usersListSize = usersList.size();
         LOGGER.info("Количество запросов которое будет произведено: {}", usersListSize);
 
