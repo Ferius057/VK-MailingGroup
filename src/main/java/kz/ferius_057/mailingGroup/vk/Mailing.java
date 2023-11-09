@@ -137,11 +137,17 @@ public class Mailing {
                 .exceptionally(throwable -> {
                     try {
                         // TODO: 05.11.2022 | проверять ошибки
-                        LOGGER.error("Прошу вас отписать мне в вк - vk.com/ferius_057 или тг - t.me/ferius_057");
-                        LOGGER.error("Не удалось выполнить метод execute: {}", throwable.getCause().getMessage());
-                        JsonObject jsonObject = new Gson().fromJson(throwable.getCause().getMessage(), JsonObject.class);
-                        System.out.println(jsonObject);
-                        System.out.println(jsonObject.get("error").getAsJsonObject().get("error_code").getAsInt());
+                        val errorMessage = throwable.getMessage();
+                        val sb = new StringBuilder("\n");
+                        sb.append("Прошу вас отписать мне в вк - vk.com/ferius_057 или тг - t.me/ferius_057");
+                        sb.append("\n").append("Не удалось выполнить метод execute: ").append(errorMessage);
+
+                        val jsonObject = new Gson().fromJson(errorMessage, JsonObject.class);
+                        sb.append("\n").append(jsonObject);
+                        sb.append("\n").append(jsonObject.get("error").getAsJsonObject().get("error_code").getAsInt());
+                        sb.append("\n").append(jsonObject.get("error").getAsJsonObject().get("error_msg").getAsString()).append("\n");
+
+                        LOGGER.error(sb.toString());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -163,7 +169,7 @@ public class Mailing {
                                 totalMemory / 1048576, freeMemory / 1048576,
                                 (totalMemory - freeMemory) / 1048576);
 
-                        isLastQuery(numberQuery.get()); // если последний запрос то завершение
+                        isLastQuery(numberQuery.get()); // если последний запрос, то завершение
                     }
                 });
     }
