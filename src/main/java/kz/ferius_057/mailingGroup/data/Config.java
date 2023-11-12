@@ -52,7 +52,8 @@ public class Config {
             return new Config(
                     config.getString("token"),
                     config.getString("message")
-                            .replace("\n", "<br>"),
+                            .replace("\n", "<br>")
+                            .replace("\"", "&#8221;"),
                     config.getConfigurationSection("attachments")
                             .getValues(true)
                             .entrySet().stream()

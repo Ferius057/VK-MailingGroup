@@ -27,7 +27,7 @@ import java.util.concurrent.CompletableFuture;
  * @date ⭐ 10.09.2022 | 2:57 ⭐
  */
 public class Main {
-    static final Logger LOGGER = LogManager.getLogger(Config.class);
+    static final Logger LOGGER = LogManager.getLogger(Main.class);
     static final String CURRENT_VERSION = getCurrentVersion();
 
     static {
