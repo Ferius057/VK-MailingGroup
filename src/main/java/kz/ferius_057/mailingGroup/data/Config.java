@@ -15,8 +15,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -38,7 +40,7 @@ public class Config {
     boolean testModeEnable;
     List<Integer> testModeUsers;
 
-    List<Integer> blackListUsers;
+    Set<Integer> blackListUsers;
 
     @SuppressWarnings("unchecked")
     public static Config load(final Path path) {
@@ -68,7 +70,7 @@ public class Config {
                             )),
                     config.getBoolean("testMode.enable"),
                     config.getIntegerList("testMode.users"),
-                    config.getIntegerList("blackList")
+                    new HashSet<>(config.getIntegerList("blackList"))
             );
     }
 }
