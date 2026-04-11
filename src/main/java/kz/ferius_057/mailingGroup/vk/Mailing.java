@@ -21,8 +21,10 @@ import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -114,12 +116,12 @@ public class Mailing {
         return usersItem;
     }
 
-    private List<Integer> getUserIdsDeleted(final ExtendedVkList<GetConversations.ResponseBody.Item> response) {
+    private Set<Integer> getUserIdsDeleted(final ExtendedVkList<GetConversations.ResponseBody.Item> response) {
         return response.getProfiles().stream()
                 .filter(user -> Optional.ofNullable(
                         user.getDeactivated()).orElse("").equalsIgnoreCase("deleted")
                 ).map(User::getId)
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(HashSet::new));
     }
 
     private void send(final List<Integer> users, final AtomicInteger numberQuery, final String attachments) {

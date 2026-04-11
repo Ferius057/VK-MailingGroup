@@ -55,9 +55,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.yvasyliev</groupId>
+            <groupId>io.github.bivashy</groupId>
             <artifactId>java-vk-bots-longpoll-api</artifactId>
-            <version>4.1.3</version>
+            <version>4.1.8</version>
         </dependency>
 
         <dependency>
