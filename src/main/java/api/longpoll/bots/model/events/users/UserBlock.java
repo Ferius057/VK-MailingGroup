@@ -1,0 +1,90 @@
+package api.longpoll.bots.model.events.users;
+
+import api.longpoll.bots.model.events.Update;
+import com.google.gson.annotations.SerializedName;
+
+/**
+ * Describes <b>user_block</b> event objects.
+ */
+public class UserBlock implements Update.Object {
+    /**
+     * Administrator ID.
+     */
+    @SerializedName("admin_id")
+    private Long adminId;
+
+    /**
+     * User ID.
+     */
+    @SerializedName("user_id")
+    private Long userId;
+
+    /**
+     * Date when the user will be unblocked.
+     */
+    @SerializedName("unblock_date")
+    private Integer unblockDate;
+
+    /**
+     * Ban reason.
+     */
+    @SerializedName("reason")
+    private Integer reason;
+
+    /**
+     * Text of the comment to the ban.
+     */
+    @SerializedName("comment")
+    private String comment;
+
+    public Long getAdminId() {
+        return adminId;
+    }
+
+    public void setAdminId(Long adminId) {
+        this.adminId = adminId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Integer getUnblockDate() {
+        return unblockDate;
+    }
+
+    public void setUnblockDate(Integer unblockDate) {
+        this.unblockDate = unblockDate;
+    }
+
+    public Integer getReason() {
+        return reason;
+    }
+
+    public void setReason(Integer reason) {
+        this.reason = reason;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    @Override
+    public String toString() {
+        return "UserBlockEvent{" +
+                "adminId=" + adminId +
+                ", userId=" + userId +
+                ", unblockDate=" + unblockDate +
+                ", reason=" + reason +
+                ", comment=" + comment +
+                '}';
+    }
+}

@@ -2,6 +2,7 @@ package kz.ferius_057.mailingGroup;
 
 import kz.ferius_057.mailingGroup.data.Config;
 import kz.ferius_057.mailingGroup.longpoll.LongPollListener;
+import kz.ferius_057.mailingGroup.util.Analytics;
 import kz.ferius_057.mailingGroup.util.Update;
 import kz.ferius_057.mailingGroup.vk.Mailing;
 import lombok.Cleanup;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
@@ -44,6 +46,7 @@ public class Main {
 
         val config = Config.load(Paths.get("config.yml"));
         if (Optional.ofNullable(config).isPresent()) {
+            Analytics.launch(CURRENT_VERSION, config.isTestModeEnable());
             LOGGER.info("\n[✸] Проверьте данные с конфига:"
                     + "\n[✸] Тестовая рассылка: " +
                     (config.isTestModeEnable()
@@ -86,7 +89,7 @@ public class Main {
         LOGGER.info(
                 "\n╓———————————————————————————————————————————————————————————"
                         + "\n╟———→ MailingGroup v{}   by Ferius_057 aka Charles_Grozny"
-                        + "\n╟———→ Разработчик: vk.com/ferius_057"
+                        + "\n╟———→ Разработчик: t.me/ferius_057"
                         + "\n╟———→ Исходный код: github.com/Ferius057/VK-MailingGroup"
                         + "\n║"
                         + "\n╟———→ Running on {} {}"

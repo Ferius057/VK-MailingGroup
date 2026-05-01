@@ -11,6 +11,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import kz.ferius_057.mailingGroup.data.Config;
 import kz.ferius_057.mailingGroup.model.basic.ResultResponse;
+import kz.ferius_057.mailingGroup.util.Analytics;
 import kz.ferius_057.mailingGroup.util.AttachmentUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +44,8 @@ public class Mailing {
     Config config;
 
 
-    @NonFinal List<Integer> usersItem;
+    @NonFinal List<Long> usersItem;
+    @NonFinal long startTime;
     static final int COUNT = 200; // max value 200 | кол-во диалогов которые нужно получать каждый запрос
     static final int COUNT_FOR_SEND = 100; // max value 100 | кол-во пользователей в 1 запросе отправки сообщения
     static final JsonArray RESPONSES = new JsonArray();
@@ -53,6 +55,7 @@ public class Mailing {
 
     @SneakyThrows
     public void run() {
+        startTime = System.currentTimeMillis();
         val uploadPhoto = AttachmentUtil.parseAttachments(vk, config.getAttachments());
 
         // Проверяет если включен тест рассылки то берет id пользователей из списка 'user'
@@ -82,7 +85,7 @@ public class Mailing {
     }
 
     @SneakyThrows
-    private List<Integer> getAvailableItems() {
+    private List<Long> getAvailableItems() {
         val firstResponse = vk.messages.getConversations().setCount(COUNT).setExtended(true).execute().getResponse();
         val userIdsDeleted = getUserIdsDeleted(firstResponse);
         val items = firstResponse.getItems();
@@ -116,7 +119,7 @@ public class Mailing {
         return usersItem;
     }
 
-    private Set<Integer> getUserIdsDeleted(final ExtendedVkList<GetConversations.ResponseBody.Item> response) {
+    private Set<Long> getUserIdsDeleted(final ExtendedVkList<GetConversations.ResponseBody.Item> response) {
         return response.getProfiles().stream()
                 .filter(user -> Optional.ofNullable(
                         user.getDeactivated()).orElse("").equalsIgnoreCase("deleted")
@@ -124,7 +127,7 @@ public class Mailing {
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    private void send(final List<Integer> users, final AtomicInteger numberQuery, final String attachments) {
+    private void send(final List<Long> users, final AtomicInteger numberQuery, final String attachments) {
         vk.other.execute()
                 .setCode(
                         "return API.messages.send({" +
@@ -181,8 +184,16 @@ public class Mailing {
             LOGGER.info("\n------------------------------------------------------------------------------");
             val response = GSON.fromJson(RESPONSES, ResultResponse.class);
 
+            val durationMs = System.currentTimeMillis() - startTime;
+            val totalSeconds = durationMs / 1000;
+            val hours = totalSeconds / 3600;
+            val minutes = (totalSeconds % 3600) / 60;
+            val seconds = totalSeconds % 60;
+
             LOGGER.debug("Все ответы запросов: {}", RESPONSES);
             LOGGER.info("Успешно отправлено: {} из {}", response.getCountSuccessful(), usersItem.size());
+            LOGGER.info("Время выполнения: {}", String.format("%d:%02d:%02d", hours, minutes, seconds));
+            Analytics.mailingResult(response.getCountSuccessful(), usersItem.size(), durationMs, String.format("%d:%02d:%02d", hours, minutes, seconds));
             response.getErrors()
                     .forEach(errorResponse ->
                             LOGGER.warn("Ошибка №{}: {} не отправлено   |   {}",

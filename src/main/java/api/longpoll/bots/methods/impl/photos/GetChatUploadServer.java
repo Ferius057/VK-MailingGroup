@@ -1,0 +1,49 @@
+package api.longpoll.bots.methods.impl.photos;
+
+import api.longpoll.bots.methods.impl.VkMethod;
+import api.longpoll.bots.utils.VkMethods;
+
+/**
+ * Implements <b>photos.getChatUploadServer</b> method.
+ * <p>
+ * Returns an upload link for chat cover pictures.
+ *
+ * @see <a href="https://vk.com/dev/photos.getChatUploadServer">https://vk.com/dev/photos.getChatUploadServer</a>
+ */
+public class GetChatUploadServer extends VkMethod<GetChatUploadServer.ResponseBody> {
+    public GetChatUploadServer(String accessToken) {
+        super(VkMethods.get("photos.getChatUploadServer"), accessToken);
+    }
+
+    @Override
+    protected Class<ResponseBody> getResponseClass() {
+        return ResponseBody.class;
+    }
+
+    public GetChatUploadServer setChatId(int chatId) {
+        return addParam("chat_id", chatId);
+    }
+
+    public GetChatUploadServer setCropX(int cropX) {
+        return addParam("crop_x", cropX);
+    }
+
+    public GetChatUploadServer setCropY(int cropY) {
+        return addParam("crop_y", cropY);
+    }
+
+    public GetChatUploadServer setCropWidth(int cropWidth) {
+        return addParam("crop_width", cropWidth);
+    }
+
+    @Override
+    public GetChatUploadServer addParam(String key, Object value) {
+        return (GetChatUploadServer) super.addParam(key, value);
+    }
+
+    /**
+     * Response to <b>photos.getChatUploadServer</b> request.
+     */
+    public static class ResponseBody extends GetOwnerCoverPhotoUploadServer.ResponseBody {
+    }
+}

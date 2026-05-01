@@ -38,9 +38,9 @@ public class Config {
     Map<AttachmentType, List<String>> attachments;
 
     boolean testModeEnable;
-    List<Integer> testModeUsers;
+    List<Long> testModeUsers;
 
-    Set<Integer> blackListUsers;
+    Set<Long> blackListUsers;
 
     @SuppressWarnings("unchecked")
     public static Config load(final Path path) {
@@ -69,8 +69,8 @@ public class Config {
                                     }
                             )),
                     config.getBoolean("testMode.enable"),
-                    config.getIntegerList("testMode.users"),
-                    new HashSet<>(config.getIntegerList("blackList"))
+                    config.getIntegerList("testMode.users").stream().map(Integer::longValue).collect(Collectors.toList()),
+                    config.getIntegerList("blackList").stream().map(Integer::longValue).collect(Collectors.toCollection(HashSet::new))
             );
     }
 }

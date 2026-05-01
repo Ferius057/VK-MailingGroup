@@ -1,0 +1,46 @@
+package api.longpoll.bots.model.events.other;
+
+import api.longpoll.bots.model.events.Update;
+import api.longpoll.bots.model.objects.media.Photo;
+import com.google.gson.annotations.SerializedName;
+
+/**
+ * Describes <b>group_change_photo</b> event objects.
+ */
+public class GroupChangePhoto implements Update.Object {
+    /**
+     * ID of the user who made changes.
+     */
+    @SerializedName("user_id")
+    private Long userId;
+
+    /**
+     * Photo object.
+     */
+    @SerializedName("photo")
+    private Photo photo;
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Photo getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(Photo photo) {
+        this.photo = photo;
+    }
+
+    @Override
+    public String toString() {
+        return "GroupChangePhotoEvent{" +
+                "userId=" + userId +
+                ", photo=" + photo +
+                '}';
+    }
+}
