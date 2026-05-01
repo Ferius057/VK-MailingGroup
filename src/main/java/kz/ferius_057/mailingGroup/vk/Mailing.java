@@ -190,7 +190,6 @@ public class Mailing {
             val minutes = (totalSeconds % 3600) / 60;
             val seconds = totalSeconds % 60;
 
-            LOGGER.debug("Все ответы запросов: {}", RESPONSES);
             LOGGER.info("Успешно отправлено: {} из {}", response.getCountSuccessful(), usersItem.size());
             LOGGER.info("Время выполнения: {}", String.format("%d:%02d:%02d", hours, minutes, seconds));
             Analytics.mailingResult(response.getCountSuccessful(), usersItem.size(), durationMs, String.format("%d:%02d:%02d", hours, minutes, seconds));
