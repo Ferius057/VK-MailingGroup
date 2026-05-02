@@ -27,7 +27,7 @@ public class Analytics {
     private static final ZoneOffset ZONE = ZoneOffset.ofHours(5);
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 
-    public static void launch(final String version, final boolean testMode) {
+    public static void launch(final String version, final boolean testMode, final long pingMs) {
         CompletableFuture.runAsync(() -> {
             try {
                 val clientId = getOrCreateClientId();
@@ -40,8 +40,10 @@ public class Analytics {
                         "\"events\":[{" +
                         "\"name\":\"launch\"," +
                         "\"params\":{" +
+                        "\"uuid\":\"" + clientId + "\"," +
                         "\"version\":\"" + version + "\"," +
                         "\"test_mode\":" + testMode + "," +
+                        "\"ping_vkapi_ms\":" + pingMs + "," +
                         "\"date_time\":\"" + dateTime + "\"," +
                         "\"engagement_time_msec\":1" +
                         "}" +
@@ -59,7 +61,7 @@ public class Analytics {
         });
     }
 
-    public static void mailingResult(final int successCount, final int totalCount, final long durationMs, final String durationFormatted) {
+    public static void mailingResult(final String version, final long pingMs, final int successCount, final int totalCount, final long durationMs, final String durationFormatted) {
         try {
             val clientId = getOrCreateClientId();
             val nowMicros = TimeUnit.MILLISECONDS.toMicros(System.currentTimeMillis());
@@ -71,6 +73,9 @@ public class Analytics {
                     "\"events\":[{" +
                     "\"name\":\"mailing_result\"," +
                     "\"params\":{" +
+                    "\"uuid\":\"" + clientId + "\"," +
+                    "\"version\":\"" + version + "\"," +
+                    "\"ping_vkapi_ms\":" + pingMs + "," +
                     "\"success_count\":" + successCount + "," +
                     "\"total_count\":" + totalCount + "," +
                     "\"duration_ms\":" + durationMs + "," +

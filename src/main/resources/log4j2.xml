@@ -2,7 +2,7 @@
 <Configuration status="warn" shutdownHook="disable">
     <Appenders>
         <Console name="TerminalConsole">
-            <PatternLayout pattern="[%d{HH:mm:ss} %level]: %msg%n%xEx" />
+            <PatternLayout pattern="[%d{HH:mm:ss} %level]: %msg%n%xEx" charset="UTF-8" />
         </Console>
 
         <RollingRandomAccessFile name="File" fileName="logs/latest.log"

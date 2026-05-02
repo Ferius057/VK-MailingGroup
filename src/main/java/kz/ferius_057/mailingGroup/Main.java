@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Scanner;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Ferius_057 (Charles_Grozny)
@@ -33,20 +32,21 @@ public class Main {
     static final String CURRENT_VERSION = getCurrentVersion();
 
     static {
-        /* for logging */
+        System.setProperty("file.encoding", "UTF-8");
+        System.setProperty("stdout.encoding", "UTF-8");
         System.setErr(IoBuilder.forLogger().setLevel(Level.ERROR).buildPrintStream());
         System.setOut(IoBuilder.forLogger().setLevel(Level.INFO).buildPrintStream());
     }
 
     public static void main(String[] args) throws InterruptedException {
         showMenu();
-        pingVKApi();
+        val pingMs = pingVKApi();
 
         Update.check(CURRENT_VERSION);
 
         val config = Config.load(Paths.get("config.yml"));
         if (Optional.ofNullable(config).isPresent()) {
-            Analytics.launch(CURRENT_VERSION, config.isTestModeEnable());
+            Analytics.launch(CURRENT_VERSION, config.isTestModeEnable(), pingMs);
             LOGGER.info("\n[✸] Проверьте данные с конфига:"
                     + "\n[✸] Тестовая рассылка: " +
                     (config.isTestModeEnable()
@@ -70,7 +70,9 @@ public class Main {
             LOGGER.info("Начало рассылки...");
             new Mailing(
                     LongPollListener.create(config.getToken()),
-                    config
+                    config,
+                    CURRENT_VERSION,
+                    pingMs
             ).run();
         }
     }
@@ -102,19 +104,19 @@ public class Main {
     }
 
     @SneakyThrows
-    private static void pingVKApi() {
-        CompletableFuture.runAsync(() -> {
-            try {
-                @Cleanup val socket = new Socket();
-                val endpoint = new InetSocketAddress("api.vk.com", 80);
-                val start = System.currentTimeMillis();
+    private static long pingVKApi() {
+        try {
+            @Cleanup val socket = new Socket();
+            val endpoint = new InetSocketAddress("api.vk.com", 80);
+            val start = System.currentTimeMillis();
 
-                socket.connect(endpoint, 0);
+            socket.connect(endpoint, 0);
 
-                LOGGER.debug("Пинг до api.vk.com - {} = {}ms", endpoint.getAddress(), System.currentTimeMillis() - start);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+            val pingMs = System.currentTimeMillis() - start;
+            LOGGER.debug("Пинг до api.vk.com - {} = {}ms", endpoint.getAddress(), pingMs);
+            return pingMs;
+        } catch (IOException e) {
+            return -1;
+        }
     }
 }

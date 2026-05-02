@@ -2,7 +2,6 @@ package kz.ferius_057.mailingGroup.vk;
 
 import api.longpoll.bots.methods.VkBotsMethods;
 import api.longpoll.bots.methods.impl.messages.GetConversations;
-import api.longpoll.bots.methods.impl.other.Execute;
 import api.longpoll.bots.model.objects.basic.User;
 import api.longpoll.bots.model.response.ExtendedVkList;
 import com.google.common.collect.Lists;
@@ -42,6 +41,8 @@ public class Mailing {
     static final Logger LOGGER = LogManager.getLogger(Mailing.class);
     VkBotsMethods vk;
     Config config;
+    String version;
+    long pingMs;
 
 
     @NonFinal List<Long> usersItem;
@@ -72,16 +73,20 @@ public class Mailing {
         val countQuery = new AtomicInteger(usersListSize-1);
         val attachments = uploadPhoto.get();
         LOGGER.debug("Вложения в сообщении: {}", attachments);
-        usersList.forEach(user -> send(user, countQuery, attachments));
-
         LOGGER.info("Все {} запросов приступили к работе...", usersListSize);
+
+        for (List<Long> users : usersList) {
+            send(users, countQuery, attachments);
+            Thread.sleep(100);
+        }
+
 
 
         SCHEDULED_EXECUTOR_SERVICE.schedule(() -> {
             LOGGER.error("Прошу вас отписать мне в вк - vk.com/ferius_057 или тг - t.me/ferius_057");
             LOGGER.error("Произошла неизвестная ошибка, скрипт был выключен автоматически. | {}", RESPONSES.size());
             SCHEDULED_EXECUTOR_SERVICE.shutdownNow();
-        }, 1, TimeUnit.HOURS); // если произойдет ошибка, то автоматическое выключение через час
+        }, 5, TimeUnit.HOURS);
     }
 
     @SneakyThrows
@@ -98,6 +103,7 @@ public class Mailing {
                     .setOffset(i * COUNT)
                     .setExtended(true)
                     .execute().getResponse();
+            if (response.getItems().isEmpty()) break;
             items.addAll(response.getItems());
             userIdsDeleted.addAll(getUserIdsDeleted(response));
         }
@@ -120,6 +126,7 @@ public class Mailing {
     }
 
     private Set<Long> getUserIdsDeleted(final ExtendedVkList<GetConversations.ResponseBody.Item> response) {
+        if (response.getProfiles() == null) return new HashSet<>();
         return response.getProfiles().stream()
                 .filter(user -> Optional.ofNullable(
                         user.getDeactivated()).orElse("").equalsIgnoreCase("deleted")
@@ -156,9 +163,14 @@ public class Mailing {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    return new Execute.ResponseBody();
+                    synchronized (RESPONSES) {
+                        numberQuery.getAndDecrement();
+                        isLastQuery(numberQuery.get());
+                    }
+                    return null;
                 })
                 .thenAccept(response -> {
+                    if (response == null) return;
                     synchronized (RESPONSES) {
                         val responseArray = response.getResponse().getAsJsonArray();
                         RESPONSES.addAll(responseArray);
@@ -192,7 +204,7 @@ public class Mailing {
 
             LOGGER.info("Успешно отправлено: {} из {}", response.getCountSuccessful(), usersItem.size());
             LOGGER.info("Время выполнения: {}", String.format("%d:%02d:%02d", hours, minutes, seconds));
-            Analytics.mailingResult(response.getCountSuccessful(), usersItem.size(), durationMs, String.format("%d:%02d:%02d", hours, minutes, seconds));
+            Analytics.mailingResult(version, pingMs, response.getCountSuccessful(), usersItem.size(), durationMs, String.format("%d:%02d:%02d", hours, minutes, seconds));
             response.getErrors()
                     .forEach(errorResponse ->
                             LOGGER.warn("Ошибка №{}: {} не отправлено   |   {}",
