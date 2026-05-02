@@ -1,6 +1,6 @@
 <h1 align="center">VK-MailingGroup</h1>
 <p align="center">
-       <a href="https://github.com/Ferius057/VK-MailingGroup/releases/tag/1.4.1">
+       <a href="https://github.com/Ferius057/VK-MailingGroup/releases/tag/1.5.0">
     <img src="https://img.shields.io/github/v/release/Ferius057/VK-MailingGroup?style=flat-square">
   </a>
     <a href="https://opensource.org/licenses/MIT">
@@ -13,11 +13,8 @@
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg">
   </a>
   <p align="center">
-  <a href="https://github.com/Ferius057/VK-MailingGroup/releases/download/1.4.1/MailingGroup.jar">
+  <a href="https://github.com/Ferius057/VK-MailingGroup/releases/download/1.5.0/MailingGroup.jar">
     <img src="https://img.shields.io/github/downloads/Ferius057/VK-MailingGroup/total?color=6ff00">
-  <a href="https://www.donationalerts.com/r/ferius_057">
-    <img src="https://img.shields.io/badge/Donate-DonationAlerts-orange.svg">
-  </a>
   </p>
 </p>
 
@@ -39,13 +36,13 @@
 <hr>
 
 ## Использование:
-   <a href="https://github.com/Ferius057/VK-MailingGroup/releases/download/1.4.1/MailingGroup.jar">
+   <a href="https://github.com/Ferius057/VK-MailingGroup/releases/download/1.5.0/MailingGroup.jar">
     <img src="https://img.shields.io/github/downloads/Ferius057/VK-MailingGroup/total?color=6ff00">
   </a>
 
 ```bash
 # Скачать на Linux
-$ wget https://github.com/Ferius057/VK-MailingGroup/releases/download/1.4.1/MailingGroup.jar
+$ wget https://github.com/Ferius057/VK-MailingGroup/releases/download/1.5.0/MailingGroup.jar
 
 
 # Для запуска скрипта
@@ -54,7 +51,7 @@ $ java -jar MailingGroup.jar
 # После запуска рядом с MailingGroup.jar будет config.yml, его надо будет настроить.
 # Обратите внимание на то что бы была верная кодировка для этого нужно использовать -Dfile.encoding=UTF-8
 # java -Dfile.encoding=UTF-8 -jar MailingGroup.jar
-# ну или на Windows chcp 65001
+# ну или на Windows chcp 65001 > nul
 ```
 
 <hr>
@@ -123,7 +120,13 @@ message: |
 
 <hr>
 
+## Google Analytics
+Начиная с версии 1.5.0 в скрипт встроена анонимная аналитика через Google Analytics.  
+Подробнее: [t.me/nolog_nolife/21](https://t.me/nolog_nolife/21)
+
+<hr>
+
 ## Links:
  - [Java 11](https://www.java.com)
  > По всем вопросам/предложениям:
- - Author: [Charles_Grozny](https://vk.me/ferius_057)
+ - Author: [Charles_Grozny](https://t.me/ferius_057)
