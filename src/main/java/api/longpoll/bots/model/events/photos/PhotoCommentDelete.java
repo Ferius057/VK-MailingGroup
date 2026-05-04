@@ -1,0 +1,90 @@
+package api.longpoll.bots.model.events.photos;
+
+import api.longpoll.bots.model.events.Update;
+import com.google.gson.annotations.SerializedName;
+
+/**
+ * Describes <b>photo_comment_delete</b> event objects.
+ */
+public class PhotoCommentDelete implements Update.Object {
+    /**
+     * Photo owner ID.
+     */
+    @SerializedName("owner_id")
+    private Long ownerId;
+
+    /**
+     * Comment ID.
+     */
+    @SerializedName("id")
+    private Integer id;
+
+    /**
+     * ID of the user who deleted a comment.
+     */
+    @SerializedName("deleter_id")
+    private Long deleterId;
+
+    /**
+     * Photo ID.
+     */
+    @SerializedName("photo_id")
+    private Integer photoId;
+
+    /**
+     * Comment author ID.
+     */
+    @SerializedName("user_id")
+    private Long userId;
+
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Long getDeleterId() {
+        return deleterId;
+    }
+
+    public void setDeleterId(Long deleterId) {
+        this.deleterId = deleterId;
+    }
+
+    public Integer getPhotoId() {
+        return photoId;
+    }
+
+    public void setPhotoId(Integer photoId) {
+        this.photoId = photoId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    @Override
+    public String toString() {
+        return "PhotoCommentDeleteEvent{" +
+                "ownerId=" + ownerId +
+                ", id=" + id +
+                ", deleterId=" + deleterId +
+                ", photoId=" + photoId +
+                ", userId=" + userId +
+                '}';
+    }
+}

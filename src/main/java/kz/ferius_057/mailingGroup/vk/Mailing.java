@@ -2,7 +2,6 @@ package kz.ferius_057.mailingGroup.vk;
 
 import api.longpoll.bots.methods.VkBotsMethods;
 import api.longpoll.bots.methods.impl.messages.GetConversations;
-import api.longpoll.bots.methods.impl.other.Execute;
 import api.longpoll.bots.model.objects.basic.User;
 import api.longpoll.bots.model.response.ExtendedVkList;
 import com.google.common.collect.Lists;
@@ -11,6 +10,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import kz.ferius_057.mailingGroup.data.Config;
 import kz.ferius_057.mailingGroup.model.basic.ResultResponse;
+import kz.ferius_057.mailingGroup.util.Analytics;
 import kz.ferius_057.mailingGroup.util.AttachmentUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +21,10 @@ import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -39,9 +41,12 @@ public class Mailing {
     static final Logger LOGGER = LogManager.getLogger(Mailing.class);
     VkBotsMethods vk;
     Config config;
+    String version;
+    long pingMs;
 
 
-    @NonFinal List<Integer> usersItem;
+    @NonFinal List<Long> usersItem;
+    @NonFinal long startTime;
     static final int COUNT = 200; // max value 200 | кол-во диалогов которые нужно получать каждый запрос
     static final int COUNT_FOR_SEND = 100; // max value 100 | кол-во пользователей в 1 запросе отправки сообщения
     static final JsonArray RESPONSES = new JsonArray();
@@ -51,6 +56,7 @@ public class Mailing {
 
     @SneakyThrows
     public void run() {
+        startTime = System.currentTimeMillis();
         val uploadPhoto = AttachmentUtil.parseAttachments(vk, config.getAttachments());
 
         // Проверяет если включен тест рассылки то берет id пользователей из списка 'user'
@@ -67,20 +73,24 @@ public class Mailing {
         val countQuery = new AtomicInteger(usersListSize-1);
         val attachments = uploadPhoto.get();
         LOGGER.debug("Вложения в сообщении: {}", attachments);
-        usersList.forEach(user -> send(user, countQuery, attachments));
-
         LOGGER.info("Все {} запросов приступили к работе...", usersListSize);
+
+        for (List<Long> users : usersList) {
+            send(users, countQuery, attachments);
+            Thread.sleep(100);
+        }
+
 
 
         SCHEDULED_EXECUTOR_SERVICE.schedule(() -> {
             LOGGER.error("Прошу вас отписать мне в вк - vk.com/ferius_057 или тг - t.me/ferius_057");
             LOGGER.error("Произошла неизвестная ошибка, скрипт был выключен автоматически. | {}", RESPONSES.size());
             SCHEDULED_EXECUTOR_SERVICE.shutdownNow();
-        }, 1, TimeUnit.HOURS); // если произойдет ошибка, то автоматическое выключение через час
+        }, 5, TimeUnit.HOURS);
     }
 
     @SneakyThrows
-    private List<Integer> getAvailableItems() {
+    private List<Long> getAvailableItems() {
         val firstResponse = vk.messages.getConversations().setCount(COUNT).setExtended(true).execute().getResponse();
         val userIdsDeleted = getUserIdsDeleted(firstResponse);
         val items = firstResponse.getItems();
@@ -93,6 +103,7 @@ public class Mailing {
                     .setOffset(i * COUNT)
                     .setExtended(true)
                     .execute().getResponse();
+            if (response.getItems().isEmpty()) break;
             items.addAll(response.getItems());
             userIdsDeleted.addAll(getUserIdsDeleted(response));
         }
@@ -114,15 +125,16 @@ public class Mailing {
         return usersItem;
     }
 
-    private List<Integer> getUserIdsDeleted(final ExtendedVkList<GetConversations.ResponseBody.Item> response) {
+    private Set<Long> getUserIdsDeleted(final ExtendedVkList<GetConversations.ResponseBody.Item> response) {
+        if (response.getProfiles() == null) return new HashSet<>();
         return response.getProfiles().stream()
                 .filter(user -> Optional.ofNullable(
                         user.getDeactivated()).orElse("").equalsIgnoreCase("deleted")
                 ).map(User::getId)
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(HashSet::new));
     }
 
-    private void send(final List<Integer> users, final AtomicInteger numberQuery, final String attachments) {
+    private void send(final List<Long> users, final AtomicInteger numberQuery, final String attachments) {
         vk.other.execute()
                 .setCode(
                         "return API.messages.send({" +
@@ -151,9 +163,14 @@ public class Mailing {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    return new Execute.ResponseBody();
+                    synchronized (RESPONSES) {
+                        numberQuery.getAndDecrement();
+                        isLastQuery(numberQuery.get());
+                    }
+                    return null;
                 })
                 .thenAccept(response -> {
+                    if (response == null) return;
                     synchronized (RESPONSES) {
                         val responseArray = response.getResponse().getAsJsonArray();
                         RESPONSES.addAll(responseArray);
@@ -179,8 +196,15 @@ public class Mailing {
             LOGGER.info("\n------------------------------------------------------------------------------");
             val response = GSON.fromJson(RESPONSES, ResultResponse.class);
 
-            LOGGER.debug("Все ответы запросов: {}", RESPONSES);
+            val durationMs = System.currentTimeMillis() - startTime;
+            val totalSeconds = durationMs / 1000;
+            val hours = totalSeconds / 3600;
+            val minutes = (totalSeconds % 3600) / 60;
+            val seconds = totalSeconds % 60;
+
             LOGGER.info("Успешно отправлено: {} из {}", response.getCountSuccessful(), usersItem.size());
+            LOGGER.info("Время выполнения: {}", String.format("%d:%02d:%02d", hours, minutes, seconds));
+            Analytics.mailingResult(version, pingMs, response.getCountSuccessful(), usersItem.size(), durationMs, String.format("%d:%02d:%02d", hours, minutes, seconds));
             response.getErrors()
                     .forEach(errorResponse ->
                             LOGGER.warn("Ошибка №{}: {} не отправлено   |   {}",

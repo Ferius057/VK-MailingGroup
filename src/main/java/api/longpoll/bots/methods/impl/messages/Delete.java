@@ -1,0 +1,70 @@
+package api.longpoll.bots.methods.impl.messages;
+
+import api.longpoll.bots.methods.impl.VkMethod;
+import api.longpoll.bots.model.response.GenericResponseBody;
+import api.longpoll.bots.utils.ParamUtils;
+import api.longpoll.bots.utils.VkMethods;
+
+import java.util.Arrays;
+import java.util.Map;
+
+/**
+ * Implements <b>messages.delete</b> method.
+ * <p>
+ * Deletes one or more messages.
+ *
+ * @see <a href="https://vk.com/dev/messages.delete">https://vk.com/dev/messages.delete</a>
+ */
+public class Delete extends VkMethod<Delete.ResponseBody> {
+    public Delete(String accessToken) {
+        super(VkMethods.get("messages.delete"), accessToken);
+    }
+
+    @Override
+    protected Class<ResponseBody> getResponseClass() {
+        return ResponseBody.class;
+    }
+
+    public Delete setMessageIds(Integer... messageIds) {
+        return setMessageIds(Arrays.asList(messageIds));
+    }
+
+    public Delete setMessageIds(Iterable<Integer> messageIds) {
+        return addParam("message_ids", ParamUtils.csv(messageIds));
+    }
+
+    public Delete setSpam(boolean spam) {
+        return addParam("spam", spam ? 1 : 0);
+    }
+
+    public Delete setGroupId(int groupId) {
+        return addParam("group_id", groupId);
+    }
+
+    public Delete setDeleteForAll(boolean deleteForAll) {
+        return addParam("delete_for_all", deleteForAll ? 1 : 0);
+    }
+
+    public Delete setConversationMessageIds(Integer... conversationMessageIds) {
+        return setConversationMessageIds(Arrays.asList(conversationMessageIds));
+    }
+
+    public Delete setConversationMessageIds(Iterable<Integer> conversationMessageIds) {
+        return addParam("conversation_message_ids", ParamUtils.csv(conversationMessageIds));
+    }
+
+    public Delete setPeerId(int peerId) {
+        return addParam("peer_id", peerId);
+    }
+
+    @Override
+    public Delete addParam(String key, Object value) {
+        return (Delete) super.addParam(key, value);
+    }
+
+    /**
+     * Response to <b>messages.delete</b> request.
+     */
+    public static class ResponseBody extends GenericResponseBody<Map<String, Integer>> {
+    }
+}

@@ -1,0 +1,55 @@
+package api.longpoll.bots.methods.impl.stories;
+
+import api.longpoll.bots.methods.impl.VkMethod;
+import api.longpoll.bots.model.objects.additional.StoriesFeedBlock;
+import api.longpoll.bots.model.objects.additional.VkList;
+import api.longpoll.bots.model.response.GenericResponseBody;
+import api.longpoll.bots.utils.ParamUtils;
+import api.longpoll.bots.utils.VkMethods;
+
+import java.util.Arrays;
+
+/**
+ * Implements <b>stories.get</b> method.
+ * <p>
+ * Returns stories available for current user.
+ *
+ * @see <a href="https://vk.com/dev/stories.get">https://vk.com/dev/stories.get</a>
+ */
+public class Get extends VkMethod<Get.ResponseBody> {
+    public Get(String accessToken) {
+        super(VkMethods.get("stories.get"), accessToken);
+    }
+
+    @Override
+    protected Class<ResponseBody> getResponseClass() {
+        return ResponseBody.class;
+    }
+
+    public Get setOwnerId(int ownerId) {
+        return addParam("owner_id", ownerId);
+    }
+
+    public Get setExtended(boolean extended) {
+        return addParam("extended", extended ? 1 : 0);
+    }
+
+    public Get setFields(String... fields) {
+        return setFields(Arrays.asList(fields));
+    }
+
+    public Get setFields(Iterable<String> fields) {
+        return addParam("fields", ParamUtils.csv(fields));
+    }
+
+    @Override
+    public Get addParam(String key, Object value) {
+        return (Get) super.addParam(key, value);
+    }
+
+    /**
+     * Response to <b>stories.get</b>
+     */
+    public static class ResponseBody extends GenericResponseBody<VkList<StoriesFeedBlock>> {
+    }
+}

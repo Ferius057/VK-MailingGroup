@@ -1,0 +1,60 @@
+package api.longpoll.bots.model.events.users;
+
+import api.longpoll.bots.model.events.Update;
+import com.google.gson.annotations.SerializedName;
+
+/**
+ * Describes <b>user_unblock</b> event objects.
+ */
+public class UserUnblock implements Update.Object {
+    /**
+     * Administrator ID.
+     */
+    @SerializedName("admin_id")
+    private Long adminId;
+
+    /**
+     * User ID.
+     */
+    @SerializedName("user_id")
+    private Long userId;
+
+    /**
+     * Unblocking date.
+     */
+    @SerializedName("by_end_date")
+    private Integer byEndDate;
+
+    public Long getAdminId() {
+        return adminId;
+    }
+
+    public void setAdminId(Long adminId) {
+        this.adminId = adminId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Integer getByEndDate() {
+        return byEndDate;
+    }
+
+    public void setByEndDate(Integer byEndDate) {
+        this.byEndDate = byEndDate;
+    }
+
+    @Override
+    public String toString() {
+        return "UserUnblockEvent{" +
+                "adminId=" + adminId +
+                ", userId=" + userId +
+                ", byEndDate=" + byEndDate +
+                '}';
+    }
+}

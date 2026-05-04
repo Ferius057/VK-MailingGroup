@@ -15,8 +15,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -36,9 +38,9 @@ public class Config {
     Map<AttachmentType, List<String>> attachments;
 
     boolean testModeEnable;
-    List<Integer> testModeUsers;
+    List<Long> testModeUsers;
 
-    List<Integer> blackListUsers;
+    Set<Long> blackListUsers;
 
     @SuppressWarnings("unchecked")
     public static Config load(final Path path) {
@@ -67,8 +69,8 @@ public class Config {
                                     }
                             )),
                     config.getBoolean("testMode.enable"),
-                    config.getIntegerList("testMode.users"),
-                    config.getIntegerList("blackList")
+                    config.getIntegerList("testMode.users").stream().map(Integer::longValue).collect(Collectors.toList()),
+                    config.getIntegerList("blackList").stream().map(Integer::longValue).collect(Collectors.toCollection(HashSet::new))
             );
     }
 }
